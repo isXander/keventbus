@@ -1,6 +1,5 @@
 package me.kbrewster.eventbus
 
-import me.kbrewster.eventbus.exception.ExceptionHandler
 import me.kbrewster.eventbus.invokers.InvokerType
 import me.kbrewster.eventbus.invokers.ReflectionInvoker
 
@@ -12,35 +11,26 @@ class EventBusBuilder {
     /**
      * Default: reflection invoker
      */
-    var invokerType: InvokerType = ReflectionInvoker()
+    private var invokerType: InvokerType = ReflectionInvoker()
 
     /**
      * Default: throws exception again
      */
-    var exceptionHandler: ExceptionHandler = object: ExceptionHandler {
-        override fun handle(exception: Exception) {
-            throw exception
-        }
-    }
+    private var exceptionHandler: (Exception, Any) -> Unit = { e, _ -> throw e }
 
-    var threadSaftey = false
+    private var threadSafety = false
 
     fun invoker(lambda: () -> InvokerType) {
         this.invokerType = lambda()
     }
 
-    fun threadSaftey(lambda: () -> Boolean) {
-        this.threadSaftey = lambda()
+    fun threadSafety(lambda: () -> Boolean) {
+        this.threadSafety = lambda()
     }
 
-    inline fun exceptionHandler(crossinline lambda: (Exception) -> Unit) {
-        this.exceptionHandler = object: ExceptionHandler {
-            override fun handle(exception: Exception) {
-                lambda(exception)
-            }
-        }
+    fun exceptionHandler(lambda: (Exception, Any) -> Unit) {
+        this.exceptionHandler = lambda
     }
 
-    fun build() = EventBus(this.invokerType, this.exceptionHandler, this.threadSaftey)
-
+    fun build() = EventBus(this.invokerType, this.exceptionHandler, this.threadSafety)
 }

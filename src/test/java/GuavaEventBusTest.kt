@@ -2,8 +2,6 @@ import com.google.common.eventbus.EventBus
 import com.google.common.eventbus.Subscribe
 import org.junit.jupiter.api.*
 
-import kotlin.random.Random
-
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 @TestMethodOrder(MethodOrderer.OrderAnnotation::class)
 class GuavaEventBusTest {
